@@ -157,9 +157,9 @@ public:
     template < typename NewType >
     BOOST_CONSTEXPR explicit
        rational(rational<NewType> const &r)
-       : num(r.numerator()), den(is_normalized(int_type(r.numerator()),
+       : num(int_type(r.numerator())), den(int_type(is_normalized(int_type(r.numerator()),
        int_type(r.denominator())) ? r.denominator() :
-       (BOOST_THROW_EXCEPTION(bad_rational("bad rational: denormalized conversion")), 0)){}
+       (BOOST_THROW_EXCEPTION(bad_rational("bad rational: denormalized conversion")), 0))){}
 #endif
 
     // Default copy constructor and assignment are fine
@@ -235,7 +235,7 @@ private:
 
     static BOOST_CONSTEXPR
     int_type inner_abs( param_type x, int_type const &zero = int_type(0) )
-    { return x < zero ? -x : +x; }
+    { return x < zero ? static_cast<param_type>(0u) - x : +x; }
 
     // Representation note: Fractions are kept in normalized form at all
     // times. normalized form is defined as gcd(num,den) == 1 and den > 0.
@@ -563,8 +563,8 @@ void rational<IntType>::normalize()
 
     // Ensure that the denominator is positive
     if (den < zero) {
-        num = -num;
-        den = -den;
+        num = static_cast<IntType>(0u) - num;
+        den = static_cast<IntType>(0u) - den;
     }
 
     // ...But acknowledge that the previous step doesn't always work.
@@ -585,6 +585,7 @@ namespace detail {
     struct resetter {
         resetter(std::istream& is) : is_(is), f_(is.flags()) {}
         ~resetter() { is_.flags(f_); }
+        resetter& operator=(const resetter&);
         std::istream& is_;
         std::istream::fmtflags f_;      // old GNU c++ lib has no ios_base
     };
