@@ -405,7 +405,7 @@ bool rational<IntType>::operator< (const rational<IntType>& r) const
     while ( rs.r < zero )  { rs.r += rs.d; --rs.q; }
 
     // Loop through and compare each variable's continued-fraction components
-    while ( true )
+    for ( ;; )
     {
         // The quotients of the current cycle are the continued-fraction
         // components.  Comparing two c.f. is comparing their sequences,
@@ -546,6 +546,8 @@ namespace detail {
         ~resetter() { is_.flags(f_); }
         std::istream& is_;
         std::istream::fmtflags f_;      // old GNU c++ lib has no ios_base
+    private:
+        resetter& operator=(const resetter&);
     };
 
 }
@@ -559,7 +561,7 @@ std::istream& operator>> (std::istream& is, rational<IntType>& r)
     detail::resetter sentry(is);
 
     is >> n;
-    c = is.get();
+    c = static_cast<char>(is.get());
 
     if (c != '/')
         is.clear(std::istream::badbit);  // old GNU c++ lib has no ios_base
