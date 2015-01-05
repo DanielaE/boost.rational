@@ -61,8 +61,8 @@
 
 #ifdef _MSC_VER
 #pragma warning(disable:4146)
+#pragma warning(disable:4592) // symbol will be dynamically initialized (implementation limitation)
 #endif
-
 
 // We can override this on the compile, as -DINT_TYPE=short or whatever.
 // The default test is against rational<long>.
@@ -170,7 +170,7 @@ public:
 
     bool       operator !() const  { return !this->v_; }
     self_type  operator +() const  { return self_type( +this->v_ ); }
-    self_type  operator -() const  { return self_type( -this->v_ ); }
+    self_type  operator -() const  { return self_type(0u) -this->v_; }
 
     bool  operator  <(self_type const &r) const  { return this->v_ <  r.v_; }
     bool  operator ==(self_type const &r) const  { return this->v_ == r.v_; }
@@ -1041,7 +1041,7 @@ BOOST_AUTO_TEST_CASE(conversions)
    BOOST_CHECK_THROW(sr.assign(1, big_unsigned_max).denominator(), std::domain_error);
    BOOST_CHECK_THROW((sr = big_unsigned_max).numerator(), std::domain_error);
 
-   boost::uint16_t small_unsigned_max = signed_max;
+   boost::uint16_t small_unsigned_max = static_cast<boost::uint16_t>(signed_max);
    BOOST_CHECK_EQUAL(signed_rat(small_unsigned_max).numerator(), small_unsigned_max);
    BOOST_CHECK_EQUAL(signed_rat(small_unsigned_max, 1).numerator(), small_unsigned_max);
    BOOST_CHECK_EQUAL(signed_rat(1, small_unsigned_max).denominator(), small_unsigned_max);
