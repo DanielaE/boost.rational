@@ -164,7 +164,7 @@ public:
 
     bool       operator !() const  { return !this->v_; }
     self_type  operator +() const  { return self_type( +this->v_ ); }
-    self_type  operator -() const  { return self_type( -this->v_ ); }
+    self_type  operator -() const  { return self_type( 0u-this->v_ ); }
 
     bool  operator  <(self_type const &r) const  { return this->v_ <  r.v_; }
     bool  operator ==(self_type const &r) const  { return this->v_ == r.v_; }
@@ -1020,7 +1020,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( dice_roll_test, T, all_signed_test_types )
     // must be thrown until each side has appeared at least once.
     rational_type  r = T( 0 );
 
-    for ( int  i = 1 ; i <= 6 ; ++i )
+    for ( unsigned char i = 1 ; i <= 6 ; ++i )
     {
         r += rational_type( 1, i );
     }
