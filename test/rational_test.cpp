@@ -58,6 +58,10 @@
 #include <stdexcept>
 #include <string>
 
+#if defined(BOOST_MSVC)
+# pragma warning(disable: 4592) // symbol will be dynamically initialized (implementation limitation)
+#endif
+
 // We can override this on the compile, as -DINT_TYPE=short or whatever.
 // The default test is against rational<long>.
 #ifndef INT_TYPE
